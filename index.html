@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AU Library Reservation System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="login-page" id="loginPage">
+
+    <div class="login-box">
+
+        <div class="logo">
+            <img src="images/phinma-removebg-preview.png" alt="PHINMA logo">
+        </div>
+
+        <h1>AU Library Reservation</h1>
+
+        <p class="login-subtitle">
+            Library Reservation System
+        </p>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Student ID (e.g. 01-2526-000000)"
+            inputmode="numeric"
+            autocomplete="username"
+            maxlength="20"
+            oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+        >
+
+        <div class="password-container">
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                maxlength="16"
+            >
+
+            <button
+                type="button"
+                class="eye-button"
+                onclick="togglePassword('password', 'eyeIcon')"
+            >
+                <span id="eyeIcon">👁</span>
+            </button>
+        </div>
+
+        <small class="password-hint">
+            8–16 characters, first character must be uppercase.
+        </small>
+
+<button
+    type="button"
+    class="login-button"
+    onclick="login()"
+>
+    LOGIN
+</button>
+
+<a
+    href="#"
+    class="forgot-password"
+    onclick="forgotPassword(event)"
+>
+    Forgot Password?
+</a>
+
+<p
+    id="loginLockMessage"
+    class="login-lock-message"
+></p>
+
+<p class="signup-text">
+    Don't have an account?
+
+    <button
+        type="button"
+        class="signup-button"
+        onclick="signUp()"
+    >
+        Sign Up
+    </button>
+</p>
+
+    </div>
+    </div>
+
+    <div class="main-app" id="mainApp">
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="sidebar-logo">
+
+                <div class="small-logo">
+                    <img src ="images/Au Logo.jpg" alt="AU logo">
+                </div>
+
+                <div>
+                    <h2>AU Library</h2>
+                    <p>Reservation</p>
+                </div>
+
+            </div>
+
+
+            <nav class="sidebar-menu">
+
+                <button
+                    type="button"
+                    onclick="showDashboard()"
+                >
+                    <span>&#127968;</span>
+                    Dashboard
+                </button>
+
+                <button
+                    type="button"
+                    onclick="showBookList()"
+                >
+                    <span>&#128218;</span>
+                    Book List
+                </button>
+
+                <button
+                    type="button"
+                    onclick="showOngoing()"
+                >
+                    <span>&#128214;</span>
+                    Ongoing Books
+                </button>
+
+                <button
+                    type="button"
+                    onclick="showReservations()"
+                >
+                    <span>&#128203;</span>
+                    Reservations
+                </button>
+
+                <button
+                    type="button"
+                    onclick="openBasket()"
+                >
+                    <span>&#128722;</span>
+                    My Basket
+
+                    <span
+                        class="basket-count"
+                        id="basketCount"
+                    >
+                        0
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    onclick="showProfile()"
+                >
+                    <span>&#128100;</span>
+                    Profile
+                </button>
+
+            </nav>
+
+
+            <button
+                type="button"
+                class="logout-button"
+                onclick="logout()"
+            >
+                <span>&#128682;</span>
+                Logout
+            </button>
+
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <button
+                    type="button"
+                    class="menu-button"
+                    onclick="toggleSidebar()"
+                >
+                    &#9776;
+                </button>
+
+
+                <div class="topbar-title">
+
+                    <h2 id="pageTitle">
+                        Dashboard
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="top-basket-button"
+                    onclick="openBasket()"
+                >
+                    &#128722;
+
+                    <span id="topBasketCount">
+                        0
+                    </span>
+                </button>
+
+            </header>
+
+
+            <section
+                class="content"
+                id="content"
+            >
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <div
+        class="modal"
+        id="basketModal"
+    >
+
+        <div class="modal-box basket-modal">
+
+            <div class="modal-header">
+
+                <h2>My Basket</h2>
+
+                <button
+                    type="button"
+                    class="close-button"
+                    onclick="closeBasket()"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div
+                class="basket-list"
+                id="basketList"
+            >
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="delete-button"
+                    onclick="deleteSelected()"
+                >
+                    Delete
+                </button>
+
+                <button
+                    type="button"
+                    class="reserve-button"
+                    onclick="reserveSelected()"
+                >
+                    Reserve
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="modal"
+        id="deleteModal"
+    >
+
+        <div class="modal-box confirmation-box">
+
+            <div class="warning-icon">
+                !
+            </div>
+
+            <h2>Are you sure?</h2>
+
+            <p>
+                Are you sure you want to delete
+                the selected book or books?
+            </p>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-button"
+                    onclick="closeDeleteModal()"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="delete-button"
+                    onclick="confirmDelete()"
+                >
+                    Yes, Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="modal"
+        id="receiptModal"
+    >
+
+        <div class="modal-box receipt-modal">
+
+            <div class="receipt-header">
+
+                <div class="receipt-logo">
+    <img
+        src="images/Au Logo.jpg"
+        alt="AU Logo"
+    >
+</div>
+
+                <div>
+                    <h2>AU Library</h2>
+                    <p>Online Reservation Receipt</p>
+                </div>
+
+            </div>
+
+
+            <div
+                id="receiptContent"
+                class="receipt-content"
+            >
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="close-receipt-button"
+                    onclick="closeReceipt()"
+                >
+                    Close
+                </button>
+
+                <button
+                    type="button"
+                    class="print-button"
+                    onclick="printReceipt()"
+                >
+                    Print Receipt
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<div class="modal" id="signupModal">
+
+    <div class="modal-box signup-modal">
+
+        <div class="modal-header">
+
+            <h2>Create Account</h2>
+
+            <button
+                type="button"
+                class="close-button"
+                onclick="closeSignUp()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <p class="signup-description">
+            Create your AU Library student account.
+        </p>
+
+        <label for="signupStudentId">
+            Student ID
+        </label>
+
+        <input
+            type="text"
+            id="signupStudentId"
+            class="signup-input"
+            placeholder="Student ID (e.g 01-2526-000000)"
+            inputmode="numeric"
+            maxlength="20"
+            oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+        >
+
+        <label for="signupPassword">
+            Password
+        </label>
+
+        <div class="password-container signup-password">
+            <input
+                type="password"
+                id="signupPassword"
+                class="signup-input"
+                placeholder="Enter Password"
+                maxlength="16"
+            >
+
+            <button
+                type="button"
+                class="eye-button"
+                onclick="togglePassword('signupPassword', 'signupEyeIcon')"
+            >
+                <span id="signupEyeIcon">👁</span>
+            </button>
+        </div>
+
+        <small class="password-hint">
+            8–16 characters, first character must be uppercase.
+        </small>
+
+        <label for="confirmPassword">
+            Confirm Password
+        </label>
+
+        <div class="password-container signup-password">
+            <input
+                type="password"
+                id="confirmPassword"
+                class="signup-input"
+                placeholder="Confirm Password"
+                maxlength="16"
+            >
+
+            <button
+                type="button"
+                class="eye-button"
+                onclick="togglePassword('confirmPassword', 'confirmEyeIcon')"
+            >
+                <span id="confirmEyeIcon">👁</span>
+            </button>
+        </div>
+
+        <button
+            type="button"
+            class="create-account-button"
+            onclick="createAccount()"
+        >
+            CREATE ACCOUNT
+        </button>
+
+    </div>
+
+</div>
+
+<script
+    type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+
+<script>
+    emailjs.init({
+        publicKey: "s5jj3jjdlMzRWvQ2S"
+    });
+</script>
+
+<script src="script.js"></script>
+
+    <div class="forgot-modal" id="forgotPasswordModal">
+
+    <div class="forgot-box">
+
+        <button
+            type="button"
+            class="forgot-close"
+            onclick="closeForgotPassword()"
+        >
+            ×
+        </button>
+
+        <h2>Forgot Password</h2>
+
+        <p class="forgot-subtitle">
+            Reset your AU Library account password
+        </p>
+
+        <div id="forgotStep1">
+
+            <input
+                type="text"
+                id="forgotStudentId"
+                placeholder="Student ID"
+                maxlength="20"
+                inputmode="numeric"
+                oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+            >
+
+            <input
+                type="email"
+                id="forgotEmail"
+                placeholder="Email Address"
+                autocomplete="email"
+            >
+
+            <button
+                type="button"
+                class="forgot-action"
+                onclick="sendOTP()"
+            >
+                SEND OTP
+            </button>
+
+        </div>
+
+        <div
+            id="forgotStep2"
+            style="display: none;"
+        >
+
+            <div class="otp-container">
+
+                <label for="otpInput">
+                    Enter the OTP sent to your email
+                </label>
+
+                <input
+                    type="text"
+                    id="otpInput"
+                    class="otp-input"
+                    placeholder="Enter 6-digit OTP"
+                    maxlength="6"
+                    inputmode="numeric"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                >
+
+                <p class="otp-description">
+                    Enter the 6-digit verification code sent to your email.
+                </p>
+
+            </div>
+
+            <div
+                id="otpTimer"
+                class="otp-timer"
+            >
+                OTP expires in: 150:00
+            </div>
+
+            <button
+                type="button"
+                class="forgot-action"
+                onclick="verifyOTP()"
+            >
+                VERIFY OTP
+            </button>
+
+        </div>
+
+        <div
+            id="forgotStep3"
+            style="display: none;"
+        >
+
+            <label for="newPassword">
+                New Password
+            </label>
+
+            <div class="password-container forgot-password-container">
+
+                <input
+                    type="password"
+                    id="newPassword"
+                    placeholder="New Password"
+                    maxlength="16"
+                >
+
+                <button
+                    type="button"
+                    class="eye-button"
+                    onclick="togglePassword('newPassword', 'newPasswordEye')"
+                >
+                    <span id="newPasswordEye">👁</span>
+                </button>
+
+            </div>
+
+
+            <label for="confirmNewPassword">
+                Confirm New Password
+            </label>
+
+            <div class="password-container forgot-password-container">
+
+                <input
+                    type="password"
+                    id="confirmNewPassword"
+                    placeholder="Confirm New Password"
+                    maxlength="16"
+                >
+
+                <button
+                    type="button"
+                    class="eye-button"
+                    onclick="togglePassword('confirmNewPassword', 'confirmNewPasswordEye')"
+                >
+                    <span id="confirmNewPasswordEye">👁</span>
+                </button>
+
+            </div>
+
+            <small class="forgot-password-hint">
+                8–16 characters, first character must be uppercase.
+            </small>
+
+            <button
+                type="button"
+                class="forgot-action"
+                onclick="resetPassword()"
+            >
+                SUBMIT
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
