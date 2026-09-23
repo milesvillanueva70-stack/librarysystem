@@ -12,7 +12,7 @@ let books = [
         author: "Jose Rizal",
         available: 2,
         image: "images/Nolime Tangere.jpg"
-    },    
+    },
     {
         id: 3,
         title: "El Filibusterismo",
@@ -43,7 +43,7 @@ let books = [
     }
 ];
 
-let basket = [];
+let reserved = [];
 let ongoingBooks = [];
 let reservations = [];
 let pageHistory = [];
@@ -51,7 +51,6 @@ let currentPage = "dashboard";
 
 let generatedOTP = "";
 let otpExpiration = 0;
-let otpTimerInterval = null;
 
 let loginSecurity = JSON.parse(
     localStorage.getItem("auLoginSecurity")
@@ -63,134 +62,81 @@ let loginSecurity = JSON.parse(
 const lockMessage =
     document.getElementById("loginLockMessage");
 
-function startOTPCountdown() {
 
-    if (otpTimerInterval) {
-
-        clearInterval(otpTimerInterval);
-        otpTimerInterval = null;
-
-    }
-
-    const timerElement =
-        document.getElementById("otpTimer");
-
-
-    function updateTimer() {
-
-        const remaining =
-            otpExpiration - Date.now();
-
-
-        if (remaining <= 0) {
-
-            clearInterval(otpTimerInterval);
-            otpTimerInterval = null;
-
-            generatedOTP = "";
-            otpExpiration = 0;
-
-
-            if (timerElement) {
-
-                timerElement.textContent =
-                    "OTP expired. Please request a new OTP.";
-
-            }
-
-            return;
-
-        }
-
-        const totalSeconds =
-            Math.floor(remaining / 1000);
-
-
-        const minutes =
-            Math.floor(totalSeconds / 60);
-
-
-        const seconds =
-            totalSeconds % 60;
-
-
-        if (timerElement) {
-
-            timerElement.textContent =
-                "OTP expires in: " +
-                String(minutes).padStart(3, "0") +
-                ":" +
-                String(seconds).padStart(2, "0");
-
-        }
-
-    }
-
-    updateTimer();
-
-    otpTimerInterval =
-        setInterval(updateTimer, 1000);
-
-}
+/* =========================
+   FORGOT PASSWORD
+========================= */
 
 function forgotPassword(event) {
 
     event.preventDefault();
 
-    document.getElementById("forgotPasswordModal").style.display = "flex";
+    document.getElementById(
+        "forgotPasswordModal"
+    ).style.display = "flex";
 
-    document.getElementById("forgotStep1").style.display = "block";
-    document.getElementById("forgotStep2").style.display = "none";
-    document.getElementById("forgotStep3").style.display = "none";
+    document.getElementById(
+        "forgotStep1"
+    ).style.display = "block";
 
+    document.getElementById(
+        "forgotStep2"
+    ).style.display = "none";
+
+    document.getElementById(
+        "forgotStep3"
+    ).style.display = "none";
 }
 
 
 function closeForgotPassword() {
 
-    document.getElementById("forgotPasswordModal").style.display = "none";
+    document.getElementById(
+        "forgotPasswordModal"
+    ).style.display = "none";
 
-    document.getElementById("forgotStudentId").value = "";
-    document.getElementById("forgotEmail").value = "";
-    document.getElementById("otpInput").value = "";
-    document.getElementById("newPassword").value = "";
-    document.getElementById("confirmNewPassword").value = "";
+    document.getElementById(
+        "forgotStudentId"
+    ).value = "";
 
-    if (otpTimerInterval) {
+    document.getElementById(
+        "forgotEmail"
+    ).value = "";
 
-        clearInterval(otpTimerInterval);
-        otpTimerInterval = null;
+    document.getElementById(
+        "otpInput"
+    ).value = "";
 
-    }
+    document.getElementById(
+        "newPassword"
+    ).value = "";
+
+    document.getElementById(
+        "confirmNewPassword"
+    ).value = "";
 
     generatedOTP = "";
     otpExpiration = 0;
-
-    const timerElement = document.getElementById("otpTimer");
-
-    if (timerElement) {
-
-        timerElement.textContent =
-            "OTP expires in: 150:00";
-
-    }
-
 }
 
 
 function sendOTP() {
 
     const studentId =
-        document.getElementById("forgotStudentId").value.trim();
+        document.getElementById(
+            "forgotStudentId"
+        ).value.trim();
 
     const email =
-        document.getElementById("forgotEmail").value.trim();
+        document.getElementById(
+            "forgotEmail"
+        ).value.trim();
 
     if (studentId === "") {
 
         alert("Please enter your Student ID.");
-        return;
 
+        return;
     }
 
     if (!/^[0-9-]+$/.test(studentId)) {
@@ -200,44 +146,47 @@ function sendOTP() {
         );
 
         return;
-
     }
 
     if (email === "") {
 
         alert("Please enter your email address.");
-        return;
 
+        return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 
-        alert("Please enter a valid email address.");
-        return;
+        alert(
+            "Please enter a valid email address."
+        );
 
+        return;
     }
 
-    const account = JSON.parse(
-        localStorage.getItem("auLibraryAccount")
-    );
-
+    const account =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryAccount"
+            )
+        );
 
     if (!account) {
 
         alert(
-            "No library account found.\n\nPlease Sign Up first."
+            "No library account found. Please Sign Up first."
         );
 
         return;
-
     }
 
     if (studentId !== account.studentId) {
 
-        alert("Student ID not found.");
+        alert(
+            "Student ID not found."
+        );
 
         return;
-
     }
 
     account.email = email;
@@ -249,19 +198,21 @@ function sendOTP() {
 
     generatedOTP =
         Math.floor(
-            100000 + Math.random() * 900000
+            100000 +
+            Math.random() * 900000
         ).toString();
 
     otpExpiration =
-        Date.now() + (150 * 60 * 1000);
-
+        Date.now() +
+        (150 * 60 * 1000);
 
     const templateParams = {
 
         to_email: email,
-        student_id: studentId,
-        otp: generatedOTP
 
+        student_id: studentId,
+
+        otp: generatedOTP
     };
 
     emailjs.send(
@@ -269,7 +220,6 @@ function sendOTP() {
         "template_xpxz9oa",
         templateParams
     )
-
     .then(function(response) {
 
         console.log(
@@ -278,94 +228,61 @@ function sendOTP() {
             response.text
         );
 
-
         alert(
             "OTP has been sent to your email.\n\n" +
             "Please check your inbox or spam folder."
         );
 
-        document.getElementById("forgotStep1").style.display = "none";
+        document.getElementById(
+            "forgotStep1"
+        ).style.display = "none";
 
-        document.getElementById("forgotStep2").style.display = "block";
-
-
-        document.getElementById("otpInput").value = "";
-
-        document.getElementById("otpInput").focus();
-
-
-        startOTPCountdown();
+        document.getElementById(
+            "forgotStep2"
+        ).style.display = "block";
 
     })
-
     .catch(function(error) {
 
-        console.error("OTP ERROR:", error);
-
-        alert(
-            "FAILED TO SEND OTP\n\n" +
-            "Status: " +
-            (error.status || "Unknown") +
-            "\n\nMessage: " +
-            (
-                error.text ||
-                error.message ||
-                "Unknown EmailJS error"
-            )
+        console.error(
+            "OTP ERROR:",
+            error
         );
 
+        alert(
+            "Failed to send OTP.\n\n" +
+            "Please check your EmailJS settings and try again."
+        );
     });
-
 }
 
 
 function verifyOTP() {
 
     const enteredOTP =
-        document.getElementById("otpInput").value.trim();
+        document.getElementById(
+            "otpInput"
+        ).value.trim();
 
     if (enteredOTP === "") {
 
-        alert("Please enter the OTP.");
-        return;
+        alert(
+            "Please enter the OTP."
+        );
 
+        return;
     }
 
-    if (
-        otpExpiration === 0 ||
-        Date.now() > otpExpiration
-    ) {
-
-        if (otpTimerInterval) {
-
-            clearInterval(otpTimerInterval);
-            otpTimerInterval = null;
-
-        }
-
-        generatedOTP = "";
-        otpExpiration = 0;
-
-
-        const timerElement =
-            document.getElementById("otpTimer");
-
-
-        if (timerElement) {
-
-            timerElement.textContent =
-                "OTP expired. Please request a new OTP.";
-
-        }
-
+    if (Date.now() > otpExpiration) {
 
         alert(
             "OTP has expired.\n\n" +
             "Please request a new OTP."
         );
 
-        return;
+        generatedOTP = "";
 
+        return;
     }
 
     if (enteredOTP !== generatedOTP) {
@@ -376,36 +293,33 @@ function verifyOTP() {
         );
 
         return;
-
     }
 
-    if (otpTimerInterval) {
+    alert(
+        "OTP verified successfully!"
+    );
 
-        clearInterval(otpTimerInterval);
-        otpTimerInterval = null;
+    document.getElementById(
+        "forgotStep2"
+    ).style.display = "none";
 
-    }
-
-
-    alert("OTP verified successfully!");
-
-    document.getElementById("forgotStep2").style.display = "none";
-
-    document.getElementById("forgotStep3").style.display = "block";
-
-
-    document.getElementById("newPassword").focus();
-
+    document.getElementById(
+        "forgotStep3"
+    ).style.display = "block";
 }
 
 
 function resetPassword() {
 
     const newPassword =
-        document.getElementById("newPassword").value;
+        document.getElementById(
+            "newPassword"
+        ).value;
 
     const confirmPassword =
-        document.getElementById("confirmNewPassword").value;
+        document.getElementById(
+            "confirmNewPassword"
+        ).value;
 
     if (
         newPassword.length < 8 ||
@@ -417,7 +331,6 @@ function resetPassword() {
         );
 
         return;
-
     }
 
     if (!/^[A-Z]/.test(newPassword)) {
@@ -427,34 +340,25 @@ function resetPassword() {
         );
 
         return;
-
     }
 
-    if (confirmPassword === "") {
-
-        alert(
-            "Please confirm your new password."
-        );
-
-        return;
-
-    }
-
-
-    if (newPassword !== confirmPassword) {
+    if (
+        newPassword !== confirmPassword
+    ) {
 
         alert(
             "Passwords do not match."
         );
 
         return;
-
     }
 
-    const account = JSON.parse(
-        localStorage.getItem("auLibraryAccount")
-    );
-
+    const account =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryAccount"
+            )
+        );
 
     if (!account) {
 
@@ -463,11 +367,10 @@ function resetPassword() {
         );
 
         return;
-
     }
 
-    account.password = newPassword;
-
+    account.password =
+        newPassword;
 
     localStorage.setItem(
         "auLibraryAccount",
@@ -477,40 +380,40 @@ function resetPassword() {
     generatedOTP = "";
     otpExpiration = 0;
 
-
-    if (otpTimerInterval) {
-
-        clearInterval(otpTimerInterval);
-        otpTimerInterval = null;
-
-    }
-
     alert(
-        "Password changed successfully!\n\n" +
-        "Your new password has been saved.\n\n" +
+        "Password reset successfully!\n\n" +
         "You can now login using your new password."
     );
 
     closeForgotPassword();
-
-    document.getElementById("loginPage").style.display = "flex";
-
 }
+
+
+/* =========================
+   LOGIN
+========================= */
 
 function login(event) {
 
     if (event) {
         event.preventDefault();
     }
+
     const studentId =
-        document.getElementById("username").value.trim();
+        document.getElementById(
+            "username"
+        ).value.trim();
 
     const password =
-        document.getElementById("password").value;
+        document.getElementById(
+            "password"
+        ).value;
 
     if (studentId === "") {
 
-        alert("Please enter your Student ID.");
+        alert(
+            "Please enter your Student ID."
+        );
 
         return;
     }
@@ -526,16 +429,60 @@ function login(event) {
 
     if (password === "") {
 
-        alert("Please enter your password.");
+        alert(
+            "Please enter your password."
+        );
 
         return;
     }
 
-    const account =
-        JSON.parse(
-            localStorage.getItem("auLibraryAccount")
+    if (
+        loginSecurity.lockUntil > Date.now()
+    ) {
+
+        const remainingMinutes =
+            Math.ceil(
+                (loginSecurity.lockUntil - Date.now()) /
+                60000
+            );
+
+        if (lockMessage) {
+
+            lockMessage.textContent =
+                `Login is locked. Try again in ${remainingMinutes} minute(s).`;
+        }
+
+        alert(
+            `Login is locked. Please wait ${remainingMinutes} minute(s).`
         );
 
+        return;
+    }
+
+    if (
+        loginSecurity.lockUntil > 0 &&
+        loginSecurity.lockUntil <= Date.now()
+    ) {
+
+        loginSecurity.lockUntil = 0;
+        loginSecurity.attempts = 0;
+
+        localStorage.setItem(
+            "auLoginSecurity",
+            JSON.stringify(loginSecurity)
+        );
+
+        if (lockMessage) {
+            lockMessage.textContent = "";
+        }
+    }
+
+    const account =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryAccount"
+            )
+        );
 
     if (!account) {
 
@@ -553,7 +500,9 @@ function login(event) {
 
         loginSecurity.attempts++;
 
-        if (loginSecurity.attempts >= 5) {
+        if (
+            loginSecurity.attempts >= 5
+        ) {
 
             loginSecurity.lockUntil =
                 Date.now() +
@@ -561,16 +510,16 @@ function login(event) {
 
             loginSecurity.attempts = 0;
 
-
             localStorage.setItem(
                 "auLoginSecurity",
                 JSON.stringify(loginSecurity)
             );
 
+            if (lockMessage) {
 
-            lockMessage.textContent =
-                "Too many failed attempts. Login is locked for 10 minutes.";
-
+                lockMessage.textContent =
+                    "Too many failed attempts. Login is locked for 10 minutes.";
+            }
 
             alert(
                 "You have reached the maximum of 5 failed login attempts.\n\n" +
@@ -585,14 +534,14 @@ function login(event) {
             JSON.stringify(loginSecurity)
         );
 
-
         const attemptsLeft =
             5 - loginSecurity.attempts;
 
+        if (lockMessage) {
 
-        lockMessage.textContent =
-            `${attemptsLeft} login attempt(s) remaining.`;
-
+            lockMessage.textContent =
+                `${attemptsLeft} login attempt(s) remaining.`;
+        }
 
         alert(
             "Incorrect Student ID or Password.\n\n" +
@@ -605,53 +554,81 @@ function login(event) {
     loginSecurity.attempts = 0;
     loginSecurity.lockUntil = 0;
 
-
     localStorage.setItem(
         "auLoginSecurity",
         JSON.stringify(loginSecurity)
     );
 
+    if (lockMessage) {
+        lockMessage.textContent = "";
+    }
 
-    lockMessage.textContent = "";
+    document.getElementById(
+        "loginPage"
+    ).style.display = "none";
 
-    document.getElementById("loginPage").style.display =
-        "none";
+    document.getElementById(
+        "mainApp"
+    ).style.display = "block";
 
-    document.getElementById("mainApp").style.display =
-        "block";
-
+    loadUserReservations();
 
     pageHistory = [];
 
     currentPage = "dashboard";
 
-
     showDashboard(false);
 }
 
+
+/* =========================
+   SIGN UP
+========================= */
+
 function signUp() {
-    document.getElementById("signupModal").style.display = "flex";
+
+    document.getElementById(
+        "signupModal"
+    ).style.display = "flex";
 }
 
 
 function closeSignUp() {
-    document.getElementById("signupModal").style.display = "none";
 
-    document.getElementById("signupStudentId").value = "";
-    document.getElementById("signupPassword").value = "";
-    document.getElementById("confirmPassword").value = "";
+    document.getElementById(
+        "signupModal"
+    ).style.display = "none";
+
+    document.getElementById(
+        "signupStudentId"
+    ).value = "";
+
+    document.getElementById(
+        "signupPassword"
+    ).value = "";
+
+    document.getElementById(
+        "confirmPassword"
+    ).value = "";
 }
+
 
 function createAccount() {
 
     const studentId =
-        document.getElementById("signupStudentId").value.trim();
+        document.getElementById(
+            "signupStudentId"
+        ).value.trim();
 
     const password =
-        document.getElementById("signupPassword").value;
+        document.getElementById(
+            "signupPassword"
+        ).value;
 
     const confirmPassword =
-        document.getElementById("confirmPassword").value;
+        document.getElementById(
+            "confirmPassword"
+        ).value;
 
     if (studentId === "") {
 
@@ -660,9 +637,7 @@ function createAccount() {
         );
 
         return;
-
     }
-
 
     if (!/^[0-9-]+$/.test(studentId)) {
 
@@ -671,32 +646,6 @@ function createAccount() {
         );
 
         return;
-
-    }
-
-    const existingAccount =
-        JSON.parse(
-            localStorage.getItem("auLibraryAccount")
-        );
-
-
-    if (
-        existingAccount &&
-        existingAccount.studentId === studentId
-    ) {
-
-        alert(
-            "This Student ID is already registered.\n\n" +
-            "Please login using your existing account."
-        );
-
-        closeSignUp();
-
-        document.getElementById("username").value =
-            studentId;
-
-        return;
-
     }
 
     if (
@@ -705,11 +654,10 @@ function createAccount() {
     ) {
 
         alert(
-            "Password must be 8–16 characters long."
+            "Password must be 8-16 characters long."
         );
 
         return;
-
     }
 
     if (!/^[A-Z]/.test(password)) {
@@ -719,27 +667,24 @@ function createAccount() {
         );
 
         return;
-
     }
 
-    if (password !== confirmPassword) {
+    if (
+        password !== confirmPassword
+    ) {
 
         alert(
             "Passwords do not match."
         );
 
         return;
-
     }
 
     const account = {
 
         studentId: studentId,
 
-        password: password,
-
-        email: ""
-
+        password: password
     };
 
     localStorage.setItem(
@@ -747,80 +692,95 @@ function createAccount() {
         JSON.stringify(account)
     );
 
-    const savedAccount =
-        JSON.parse(
-            localStorage.getItem("auLibraryAccount")
-        );
-
-
-    if (!savedAccount) {
-
-        alert(
-            "Something went wrong while saving your account."
-        );
-
-        return;
-
-    }
-
     alert(
-        "Account created successfully!\n\n" +
-        "Your account has been automatically saved.\n\n" +
-        "You can now login without signing up again."
+        "Account created successfully! You can now login."
     );
-
 
     closeSignUp();
 
-    document.getElementById("username").value =
-        studentId;
-
-
-    document.getElementById("password").value = "";
-
+    document.getElementById(
+        "username"
+    ).value = studentId;
 }
 
-function togglePassword(inputId, iconId) {
+
+/* =========================
+   PASSWORD SHOW / HIDE
+========================= */
+
+function togglePassword(
+    inputId,
+    iconId
+) {
 
     const passwordInput =
-        document.getElementById(inputId);
+        document.getElementById(
+            inputId
+        );
 
     const eyeIcon =
-        document.getElementById(iconId);
+        document.getElementById(
+            iconId
+        );
 
-    if (passwordInput.type === "password") {
+    if (
+        passwordInput.type ===
+        "password"
+    ) {
 
-        passwordInput.type = "text";
-        eyeIcon.textContent = "🙈";
+        passwordInput.type =
+            "text";
+
+        eyeIcon.textContent =
+            "🙈";
 
     } else {
 
-        passwordInput.type = "password";
-        eyeIcon.textContent = "👁";
+        passwordInput.type =
+            "password";
+
+        eyeIcon.textContent =
+            "👁";
     }
 }
 
+
+/* =========================
+   LOGOUT
+========================= */
+
 function logout() {
+
     const confirmed =
-        confirm("Are you sure you want to logout?");
+        confirm(
+            "Are you sure you want to logout?"
+        );
 
     if (!confirmed) {
         return;
     }
 
-    document.getElementById("mainApp")
-        .style.display = "none";
+    document.getElementById(
+        "mainApp"
+    ).style.display = "none";
 
-    document.getElementById("loginPage")
-        .style.display = "flex";
+    document.getElementById(
+        "loginPage"
+    ).style.display = "flex";
 
-    document.getElementById("username").value = "";
-    document.getElementById("password").value = "";
+    document.getElementById(
+        "username"
+    ).value = "";
 
-    basket = [];
+    document.getElementById(
+        "password"
+    ).value = "";
+
+    reserved = [];
     ongoingBooks = [];
     reservations = [];
     pageHistory = [];
+
     currentPage = "dashboard";
 
     updateBasketCount();
@@ -831,27 +791,54 @@ function logout() {
 }
 
 
-function toggleSidebar() {
-    const sidebar =
-        document.getElementById("sidebar");
+/* =========================
+   SIDEBAR
+========================= */
 
-    sidebar.classList.toggle("active");
+function toggleSidebar() {
+
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
+
+    sidebar.classList.toggle(
+        "active"
+    );
 }
 
 
 function closeSidebarOnMobile() {
-    const sidebar =
-        document.getElementById("sidebar");
 
-    if (window.innerWidth <= 768) {
-        sidebar.classList.remove("active");
+    const sidebar =
+        document.getElementById(
+            "sidebar"
+        );
+
+    if (
+        window.innerWidth <= 768
+    ) {
+
+        sidebar.classList.remove(
+            "active"
+        );
     }
 }
 
 
+/* =========================
+   NAVIGATION
+========================= */
+
 function navigateTo(page) {
-    if (currentPage !== page) {
-        pageHistory.push(currentPage);
+
+    if (
+        currentPage !== page
+    ) {
+
+        pageHistory.push(
+            currentPage
+        );
     }
 
     currentPage = page;
@@ -863,111 +850,203 @@ function navigateTo(page) {
 
 
 function goBack() {
-    if (pageHistory.length === 0) {
+
+    if (
+        pageHistory.length === 0
+    ) {
+
         showDashboard(false);
+
         return;
     }
 
     const previousPage =
         pageHistory.pop();
 
-    currentPage = previousPage;
+    currentPage =
+        previousPage;
 
-    renderPage(previousPage);
+    renderPage(
+        previousPage
+    );
 
     closeSidebarOnMobile();
 }
 
 
 function renderPage(page) {
-    if (page === "dashboard") {
+
+    if (
+        page === "dashboard"
+    ) {
+
         showDashboard(false);
+
         return;
     }
 
-    if (page === "books") {
+    if (
+        page === "books"
+    ) {
+
         showBookList(false);
+
         return;
     }
 
-    if (page === "ongoing") {
+    if (
+        page === "ongoing"
+    ) {
+
         showOngoing(false);
+
         return;
     }
 
-    if (page === "reservations") {
+    if (
+        page === "reservations"
+    ) {
+
         showReservations(false);
+
         return;
     }
 
-    if (page === "profile") {
+    if (
+        page === "profile"
+    ) {
+
         showProfile(false);
     }
 }
 
 
 function setPageTitle(title) {
-    document.getElementById("pageTitle")
-        .textContent = title;
+
+    document.getElementById(
+        "pageTitle"
+    ).textContent = title;
 }
 
 
-function showDashboard(addHistory = true) {
+/* =========================
+   DASHBOARD
+========================= */
+
+function showDashboard(
+    addHistory = true
+) {
+
     if (addHistory) {
-        navigateTo("dashboard");
+
+        navigateTo(
+            "dashboard"
+        );
+
         return;
     }
 
-    currentPage = "dashboard";
-    setPageTitle("Dashboard");
+    currentPage =
+        "dashboard";
+
+    setPageTitle(
+        "Dashboard"
+    );
 
     const content =
-        document.getElementById("content");
+        document.getElementById(
+            "content"
+        );
 
     const availableBooks =
         getAvailableBooksCount();
 
     content.innerHTML = `
+
         <div class="welcome-box">
-            <h1>Welcome to AU Library</h1>
+
+            <h1>
+                Welcome to AU Library
+            </h1>
+
             <p>
                 Search, reserve, and manage your library books online.
             </p>
+
         </div>
 
         <div class="dashboard-cards">
 
             <div class="dashboard-card">
-                <div class="dashboard-icon">&#128218;</div>
+
+                <div class="dashboard-icon">
+                    &#128218;
+                </div>
 
                 <div>
-                    <h3>${availableBooks}</h3>
-                    <p>Available Books</p>
+
+                    <h3>
+                        ${availableBooks}
+                    </h3>
+
+                    <p>
+                        Available Books
+                    </p>
+
                 </div>
+
             </div>
 
+
             <div class="dashboard-card">
-                <div class="dashboard-icon">&#128722;</div>
+
+                <div class="dashboard-icon">
+                    📖
+                </div>
 
                 <div>
-                    <h3>${basket.length}</h3>
-                    <p>Books in Basket</p>
+
+                    <h3>
+                        ${reserved.length}
+                    </h3>
+
+                    <p>
+                        My Reserved
+                    </p>
+
                 </div>
+
             </div>
 
+
             <div class="dashboard-card">
-                <div class="dashboard-icon">&#128214;</div>
+
+                <div class="dashboard-icon">
+                    &#128214;
+                </div>
 
                 <div>
-                    <h3>${ongoingBooks.length}</h3>
-                    <p>Ongoing Books</p>
+
+                    <h3>
+                        ${ongoingBooks.length}
+                    </h3>
+
+                    <p>
+                        Ongoing Books
+                    </p>
+
                 </div>
+
             </div>
 
         </div>
 
+
         <div class="section-title">
-            <h2>Featured Books</h2>
+
+            <h2>
+                Featured Books
+            </h2>
 
             <button
                 type="button"
@@ -976,37 +1055,69 @@ function showDashboard(addHistory = true) {
             >
                 View All Books
             </button>
+
         </div>
 
+
         <div class="book-grid">
-            ${books.slice(0, 3).map(bookCardHTML).join("")}
+
+            ${
+                books
+                    .slice(0, 3)
+                    .map(bookCardHTML)
+                    .join("")
+            }
+
         </div>
     `;
 }
 
 
 function getAvailableBooksCount() {
+
     return books.reduce(
-        (total, book) =>
-            total + book.available,
+        (
+            total,
+            book
+        ) =>
+            total +
+            book.available,
         0
     );
 }
 
 
-function showBookList(addHistory = true) {
+/* =========================
+   BOOK LIST
+========================= */
+
+function showBookList(
+    addHistory = true
+) {
+
     if (addHistory) {
-        navigateTo("books");
+
+        navigateTo(
+            "books"
+        );
+
         return;
     }
 
-    currentPage = "books";
-    setPageTitle("Book List");
+    currentPage =
+        "books";
+
+    setPageTitle(
+        "Book List"
+    );
 
     const content =
-        document.getElementById("content");
+        document.getElementById(
+            "content"
+        );
 
     content.innerHTML = `
+
         <button
             type="button"
             class="back-button"
@@ -1016,12 +1127,17 @@ function showBookList(addHistory = true) {
         </button>
 
         <div class="page-header">
-            <h1>Book List</h1>
+
+            <h1>
+                Book List
+            </h1>
 
             <p>
-                Search for books and add available books to your basket.
+                Search for books and add available books to your reserved list.
             </p>
+
         </div>
+
 
         <div class="search-container">
 
@@ -1035,66 +1151,96 @@ function showBookList(addHistory = true) {
 
         </div>
 
+
         <div
             class="book-grid"
             id="bookGrid"
         >
-            ${books.map(bookCardHTML).join("")}
+
+            ${
+                books
+                    .map(bookCardHTML)
+                    .join("")
+            }
+
         </div>
     `;
 }
 
 
+/* =========================
+   BOOK CARD
+========================= */
+
 function bookCardHTML(book) {
+
     const isAvailable =
         book.available > 0;
 
-    const alreadyInBasket =
-        basket.includes(book.id);
+    const alreadyReserved =
+        reserved.includes(
+            book.id
+        );
 
     return `
+
         <div class="book-card">
 
             <div class="book-cover">
+
                 <img
                     src="${book.image}"
                     alt="${book.title}"
                 >
+
             </div>
+
 
             <h3>
                 ${book.title}
             </h3>
 
+
             <p class="book-author">
                 ${book.author}
             </p>
+
 
             <span class="availability ${
                 isAvailable
                     ? ""
                     : "unavailable"
             }">
+
                 ${
                     isAvailable
                         ? `${book.available} Available`
                         : "Not Available"
                 }
+
             </span>
+
 
             <button
                 type="button"
                 class="add-button"
                 onclick="addToBasket(${book.id})"
-                ${!isAvailable || alreadyInBasket ? "disabled" : ""}
-            >
                 ${
-                    alreadyInBasket
-                        ? "Already in Basket"
+                    !isAvailable ||
+                    alreadyReserved
+                        ? "disabled"
+                        : ""
+                }
+            >
+
+                ${
+                    alreadyReserved
+                        ? "Already Reserved"
                         : isAvailable
-                            ? "Add to Basket"
+                            ? "Add to My Reserved"
                             : "Unavailable"
                 }
+
             </button>
 
         </div>
@@ -1102,32 +1248,51 @@ function bookCardHTML(book) {
 }
 
 
+/* =========================
+   SEARCH
+========================= */
+
 function displayBooks(list) {
+
     const grid =
-        document.getElementById("bookGrid");
+        document.getElementById(
+            "bookGrid"
+        );
 
     if (!grid) {
         return;
     }
 
-    if (list.length === 0) {
+    if (
+        list.length === 0
+    ) {
+
         grid.innerHTML = `
+
             <div class="no-results">
+
                 No books found.
+
             </div>
+
         `;
 
         return;
     }
 
     grid.innerHTML =
-        list.map(bookCardHTML).join("");
+        list
+            .map(bookCardHTML)
+            .join("");
 }
 
 
 function searchBooks() {
+
     const searchInput =
-        document.getElementById("bookSearch");
+        document.getElementById(
+            "bookSearch"
+        );
 
     if (!searchInput) {
         return;
@@ -1139,50 +1304,82 @@ function searchBooks() {
             .toLowerCase();
 
     const filteredBooks =
-        books.filter(book =>
-            book.title
-                .toLowerCase()
-                .includes(search) ||
-            book.author
-                .toLowerCase()
-                .includes(search)
+        books.filter(
+            book =>
+
+                book.title
+                    .toLowerCase()
+                    .includes(search) ||
+
+                book.author
+                    .toLowerCase()
+                    .includes(search)
         );
 
-    displayBooks(filteredBooks);
+    displayBooks(
+        filteredBooks
+    );
 }
 
 
+/* =========================
+   ADD TO MY RESERVED
+========================= */
+
 function addToBasket(bookId) {
+
     const book =
-        books.find(item =>
-            item.id === bookId
+        books.find(
+            item =>
+                item.id === bookId
         );
 
     if (!book) {
         return;
     }
 
-    if (book.available <= 0) {
-        alert("This book is not available.");
+    if (
+        book.available <= 0
+    ) {
+
+        alert(
+            "This book is not available."
+        );
+
         return;
     }
 
-    if (basket.includes(bookId)) {
-        alert("This book is already in your basket.");
+    if (
+        reserved.includes(
+            bookId
+        )
+    ) {
+
+        alert(
+            "This book is already in your reserved list."
+        );
+
         return;
     }
 
-    basket.push(bookId);
+    reserved.push(
+        bookId
+    );
 
     updateBasketCount();
 
     alert(
-        `"${book.title}" has been added to your basket.`
+        `"${book.title}" has been added to your reserved list.`
     );
 
-    if (currentPage === "books") {
+    if (
+        currentPage === "books"
+    ) {
+
         const searchInput =
-            document.getElementById("bookSearch");
+            document.getElementById(
+                "bookSearch"
+            );
 
         const search =
             searchInput
@@ -1190,142 +1387,225 @@ function addToBasket(bookId) {
                 : "";
 
         const filteredBooks =
-            books.filter(item =>
-                item.title
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) ||
-                item.author
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
+            books.filter(
+                item =>
+
+                    item.title
+                        .toLowerCase()
+                        .includes(
+                            search.toLowerCase()
+                        ) ||
+
+                    item.author
+                        .toLowerCase()
+                        .includes(
+                            search.toLowerCase()
+                        )
             );
 
-        displayBooks(filteredBooks);
+        displayBooks(
+            filteredBooks
+        );
     }
 
-    if (currentPage === "dashboard") {
-        showDashboard(false);
+    if (
+        currentPage === "dashboard"
+    ) {
+
+        showDashboard(
+            false
+        );
     }
 }
 
 
+/* =========================
+   RESERVED COUNT
+========================= */
+
 function updateBasketCount() {
+
     const basketCount =
-        document.getElementById("basketCount");
+        document.getElementById(
+            "basketCount"
+        );
 
     const topBasketCount =
-        document.getElementById("topBasketCount");
+        document.getElementById(
+            "topBasketCount"
+        );
 
     if (basketCount) {
+
         basketCount.textContent =
-            basket.length;
+            reserved.length;
     }
 
     if (topBasketCount) {
+
         topBasketCount.textContent =
-            basket.length;
+            reserved.length;
     }
 }
 
 
+/* =========================
+   OPEN RESERVED MODAL
+========================= */
+
 function openBasket() {
+
     displayBasket();
 
-    document.getElementById("basketModal")
-        .style.display = "flex";
+    document.getElementById(
+        "basketModal"
+    ).style.display = "flex";
 }
 
 
-function displayBasket() {
-    const basketList =
-        document.getElementById("basketList");
+/* =========================
+   DISPLAY RESERVED
+========================= */
 
-    if (basket.length === 0) {
+function displayBasket() {
+
+    const basketList =
+        document.getElementById(
+            "basketList"
+        );
+
+    if (!basketList) {
+        return;
+    }
+
+    if (
+        reserved.length === 0
+    ) {
+
         basketList.innerHTML = `
+
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    &#128722;
+                    📖
                 </div>
 
-                <h3>Your basket is empty</h3>
+                <h3>
+                    Your reserved list is empty
+                </h3>
 
                 <p>
-                    Add books from the Book List.
+                    Add books from the Book List to reserve them.
                 </p>
 
             </div>
+
         `;
 
         return;
     }
 
     basketList.innerHTML =
-        basket.map(bookId => {
+        reserved
+            .map(
+                bookId => {
 
-            const book =
-                books.find(item =>
-                    item.id === bookId
-                );
+                    const book =
+                        books.find(
+                            item =>
+                                item.id ===
+                                bookId
+                        );
 
-            if (!book) {
-                return "";
-            }
+                    if (!book) {
+                        return "";
+                    }
 
-            return `
-                <div class="basket-item">
+                    return `
 
-                    <input
-                        type="checkbox"
-                        class="basket-checkbox"
-                        value="${book.id}"
-                    >
+                        <div class="basket-item">
 
-                    <div class="basket-book-icon">
-                        &#128214;
-                    </div>
+                            <input
+                                type="checkbox"
+                                class="basket-checkbox"
+                                value="${book.id}"
+                            >
 
-                    <div class="basket-item-info">
+                            <div class="basket-book-icon">
+                                &#128214;
+                            </div>
 
-                        <h3>
-                            ${book.title}
-                        </h3>
+                            <div class="basket-item-info">
 
-                        <p>
-                            ${book.author}
-                        </p>
+                                <h3>
+                                    ${book.title}
+                                </h3>
 
-                    </div>
+                                <p>
+                                    ${book.author}
+                                </p>
 
-                </div>
-            `;
-        }).join("");
+                            </div>
+
+                        </div>
+
+                    `;
+                }
+            )
+            .join("");
 }
 
 
 function closeBasket() {
-    document.getElementById("basketModal")
-        .style.display = "none";
+
+    const modal =
+        document.getElementById(
+            "basketModal"
+        );
+
+    if (modal) {
+        modal.style.display =
+            "none";
+    }
 }
 
 
+/* =========================
+   GET SELECTED BOOKS
+========================= */
+
 function getSelectedBooks() {
+
     const checkboxes =
         document.querySelectorAll(
             ".basket-checkbox:checked"
         );
 
-    return Array.from(checkboxes)
-        .map(checkbox =>
-            Number(checkbox.value)
+    return Array.from(
+        checkboxes
+    )
+        .map(
+            checkbox =>
+                Number(
+                    checkbox.value
+                )
         );
 }
 
 
+/* =========================
+   DELETE RESERVED BOOKS
+========================= */
+
 function deleteSelected() {
+
     const selected =
         getSelectedBooks();
 
-    if (selected.length === 0) {
+    if (
+        selected.length === 0
+    ) {
+
         alert(
             "Please select at least one book to delete."
         );
@@ -1333,46 +1613,73 @@ function deleteSelected() {
         return;
     }
 
-    document.getElementById("deleteModal")
-        .style.display = "flex";
+    document.getElementById(
+        "deleteModal"
+    ).style.display = "flex";
 }
 
 
 function closeDeleteModal() {
-    document.getElementById("deleteModal")
-        .style.display = "none";
-}
 
-
-function confirmDelete() {
-    const selected =
-        getSelectedBooks();
-
-    basket =
-        basket.filter(
-            bookId =>
-                !selected.includes(bookId)
+    const modal =
+        document.getElementById(
+            "deleteModal"
         );
 
-    updateBasketCount();
-    displayBasket();
-    closeDeleteModal();
-
-    alert(
-        "Selected book or books have been deleted from your basket."
-    );
-
-    if (currentPage === "dashboard") {
-        showDashboard(false);
+    if (modal) {
+        modal.style.display =
+            "none";
     }
 }
 
 
-function reserveSelected() {
+function confirmDelete() {
+
     const selected =
         getSelectedBooks();
 
-    if (selected.length === 0) {
+    reserved =
+        reserved.filter(
+            bookId =>
+                !selected.includes(
+                    bookId
+                )
+        );
+
+    updateBasketCount();
+
+    displayBasket();
+
+    closeDeleteModal();
+
+    alert(
+        "Selected book or books have been removed from your reserved list."
+    );
+
+    if (
+        currentPage === "dashboard"
+    ) {
+
+        showDashboard(
+            false
+        );
+    }
+}
+
+
+/* =========================
+   RESERVE SELECTED
+========================= */
+
+function reserveSelected() {
+
+    const selected =
+        getSelectedBooks();
+
+    if (
+        selected.length === 0
+    ) {
+
         alert(
             "Please select at least one book to reserve."
         );
@@ -1382,14 +1689,35 @@ function reserveSelected() {
 
     const selectedBooks =
         selected
-            .map(bookId =>
-                books.find(book =>
-                    book.id === bookId
-                )
+            .map(
+                bookId =>
+                    books.find(
+                        book =>
+                            book.id ===
+                            bookId
+                    )
             )
             .filter(Boolean);
 
-    if (selectedBooks.length === 0) {
+    if (
+        selectedBooks.length === 0
+    ) {
+        return;
+    }
+
+    const account =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryAccount"
+            )
+        ) || {};
+
+    if (!account.studentId) {
+
+        alert(
+            "Student account not found. Please login again."
+        );
+
         return;
     }
 
@@ -1402,96 +1730,225 @@ function reserveSelected() {
     const reservationDate =
         new Date();
 
-    selectedBooks.forEach(book => {
 
-        if (book.available > 0) {
-            book.available--;
+    selectedBooks.forEach(
+        book => {
 
-            ongoingBooks.push({
-                id: book.id,
-                title: book.title,
-                author: book.author,
-                reservationId: reservationId,
-                date: reservationDate.toLocaleString(),
-                status: "Ongoing"
-            });
+            if (
+                book.available > 0
+            ) {
+
+                book.available--;
+
+                ongoingBooks.push({
+
+                    id: book.id,
+
+                    title: book.title,
+
+                    author: book.author,
+
+                    reservationId:
+                        reservationId,
+
+                    studentId:
+                        account.studentId,
+
+                    date:
+                        reservationDate
+                            .toLocaleString(),
+
+                    status:
+                        "Ongoing"
+                });
+            }
         }
-    });
+    );
+
 
     const reservation = {
-        id: reservationId,
-        books: selectedBooks.map(book => ({
-            title: book.title,
-            author: book.author
-        })),
-        date: reservationDate.toLocaleString(),
-        status: "Reserved"
+
+        id:
+            reservationId,
+
+        studentId:
+            account.studentId,
+
+        books:
+            selectedBooks.map(
+                book => ({
+
+                    title:
+                        book.title,
+
+                    author:
+                        book.author
+                })
+            ),
+
+        date:
+            reservationDate
+                .toLocaleString(),
+
+        status:
+            "Reserved"
     };
 
-    reservations.push(reservation);
 
-    basket =
-        basket.filter(
+    reservations.push(
+        reservation
+    );
+
+
+    const allReservations =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryReservations"
+            )
+        ) || [];
+
+
+    allReservations.push(
+        reservation
+    );
+
+
+    localStorage.setItem(
+        "auLibraryReservations",
+        JSON.stringify(
+            allReservations
+        )
+    );
+
+
+    reserved =
+        reserved.filter(
             bookId =>
-                !selected.includes(bookId)
+                !selected.includes(
+                    bookId
+                )
         );
+
 
     updateBasketCount();
 
     closeBasket();
 
-    createReceipt(reservation);
+    createReceipt(
+        reservation
+    );
 
-    if (currentPage === "dashboard") {
-        showDashboard(false);
+
+    if (
+        currentPage ===
+        "dashboard"
+    ) {
+
+        showDashboard(
+            false
+        );
     }
 }
 
 
-function createReceipt(reservation) {
+/* =========================
+   RECEIPT
+========================= */
+
+function createReceipt(
+    reservation
+) {
+
     const receiptContent =
-        document.getElementById("receiptContent");
+        document.getElementById(
+            "receiptContent"
+        );
+
+    if (!receiptContent) {
+        return;
+    }
 
     const bookList =
         reservation.books
-            .map(book => `
-                <div class="receipt-book">
-                    <strong>
-                        ${book.title}
-                    </strong>
-                    <br>
-                    <span>
-                        ${book.author}
-                    </span>
-                </div>
-            `)
+            .map(
+                book => `
+
+                    <div class="receipt-book">
+
+                        <strong>
+                            ${book.title}
+                        </strong>
+
+                        <br>
+
+                        <span>
+                            ${book.author}
+                        </span>
+
+                    </div>
+
+                `
+            )
             .join("");
 
+
     receiptContent.innerHTML = `
+
         <div class="receipt-details">
 
             <div class="receipt-row">
-                <span>Reservation ID</span>
+
+                <span>
+                    Reservation ID
+                </span>
+
                 <span>
                     ${reservation.id}
                 </span>
+
             </div>
 
+
             <div class="receipt-row">
-                <span>Date & Time</span>
+
+                <span>
+                    Student ID
+                </span>
+
+                <span>
+                    ${reservation.studentId}
+                </span>
+
+            </div>
+
+
+            <div class="receipt-row">
+
+                <span>
+                    Date & Time
+                </span>
+
                 <span>
                     ${reservation.date}
                 </span>
+
             </div>
 
+
             <div class="receipt-row">
-                <span>Status</span>
+
+                <span>
+                    Status
+                </span>
+
                 <span>
                     ${reservation.status}
                 </span>
+
             </div>
 
         </div>
+
 
         <div class="receipt-books">
 
@@ -1503,43 +1960,66 @@ function createReceipt(reservation) {
 
         </div>
 
+
         <div class="receipt-footer">
+
             Please keep this receipt for your library reservation.
+
         </div>
     `;
 
-    document.getElementById("receiptModal")
-        .style.display = "flex";
+
+    document.getElementById(
+        "receiptModal"
+    ).style.display = "flex";
 }
 
 
 function closeReceipt() {
-    document.getElementById("receiptModal")
-        .style.display = "none";
+
+    const modal =
+        document.getElementById(
+            "receiptModal"
+        );
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+    }
 }
 
 
 function printReceipt() {
 
-    const originalTitle = document.title;
+    const originalTitle =
+        document.title;
 
-    document.title = "AU Library Receipt";
+    document.title =
+        "AU Library Receipt";
 
     window.print();
 
-    setTimeout(() => {
-        document.title = originalTitle;
-    }, 1000);
+    setTimeout(
+        () => {
+
+            document.title =
+                originalTitle;
+
+        },
+        1000
+    );
 }
 
-
 function showOngoing(addHistory = true) {
+
     if (addHistory) {
         navigateTo("ongoing");
         return;
     }
 
     currentPage = "ongoing";
+
     setPageTitle("Ongoing Books");
 
     const content =
@@ -1550,6 +2030,7 @@ function showOngoing(addHistory = true) {
     if (ongoingBooks.length === 0) {
 
         content.innerHTML = `
+
             <button
                 type="button"
                 class="back-button"
@@ -1559,10 +2040,15 @@ function showOngoing(addHistory = true) {
             </button>
 
             <div class="page-header">
-                <h1>Ongoing Books</h1>
+
+                <h1>
+                    Ongoing Books
+                </h1>
+
                 <p>
                     Books that you currently have reserved.
                 </p>
+
             </div>
 
             <div class="empty-state">
@@ -1580,13 +2066,16 @@ function showOngoing(addHistory = true) {
                 </p>
 
             </div>
+
         `;
 
         return;
     }
 
     ongoingBooks.forEach(book => {
+
         tableContent += `
+
             <tr>
 
                 <td>
@@ -1606,16 +2095,20 @@ function showOngoing(addHistory = true) {
                 </td>
 
                 <td>
+
                     <span class="status status-ongoing">
                         ${book.status}
                     </span>
+
                 </td>
 
             </tr>
+
         `;
     });
 
     content.innerHTML = `
+
         <button
             type="button"
             class="back-button"
@@ -1625,11 +2118,15 @@ function showOngoing(addHistory = true) {
         </button>
 
         <div class="page-header">
-            <h1>Ongoing Books</h1>
+
+            <h1>
+                Ongoing Books
+            </h1>
 
             <p>
                 Books that you currently have reserved.
             </p>
+
         </div>
 
         <div class="table-container">
@@ -1637,33 +2134,58 @@ function showOngoing(addHistory = true) {
             <table class="data-table">
 
                 <thead>
+
                     <tr>
-                        <th>Book</th>
-                        <th>Author</th>
-                        <th>Reservation ID</th>
-                        <th>Date</th>
-                        <th>Status</th>
+
+                        <th>
+                            Book
+                        </th>
+
+                        <th>
+                            Author
+                        </th>
+
+                        <th>
+                            Reservation ID
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
+
                     ${tableContent}
+
                 </tbody>
 
             </table>
 
         </div>
+
     `;
 }
 
 
 function showReservations(addHistory = true) {
+
     if (addHistory) {
+
         navigateTo("reservations");
+
         return;
     }
 
     currentPage = "reservations";
+
     setPageTitle("Reservations");
 
     const content =
@@ -1672,6 +2194,7 @@ function showReservations(addHistory = true) {
     if (reservations.length === 0) {
 
         content.innerHTML = `
+
             <button
                 type="button"
                 class="back-button"
@@ -1681,11 +2204,15 @@ function showReservations(addHistory = true) {
             </button>
 
             <div class="page-header">
-                <h1>Reservations</h1>
+
+                <h1>
+                    Reservations
+                </h1>
 
                 <p>
                     Your reservation history.
                 </p>
+
             </div>
 
             <div class="empty-state">
@@ -1703,6 +2230,7 @@ function showReservations(addHistory = true) {
                 </p>
 
             </div>
+
         `;
 
         return;
@@ -1718,6 +2246,7 @@ function showReservations(addHistory = true) {
                 .join(", ");
 
         tableContent += `
+
             <tr>
 
                 <td>
@@ -1733,16 +2262,20 @@ function showReservations(addHistory = true) {
                 </td>
 
                 <td>
+
                     <span class="status status-reserved">
                         ${reservation.status}
                     </span>
+
                 </td>
 
             </tr>
+
         `;
     });
 
     content.innerHTML = `
+
         <button
             type="button"
             class="back-button"
@@ -1770,40 +2303,65 @@ function showReservations(addHistory = true) {
                 <thead>
 
                     <tr>
-                        <th>Reservation ID</th>
-                        <th>Book</th>
-                        <th>Date & Time</th>
-                        <th>Status</th>
+
+                        <th>
+                            Reservation ID
+                        </th>
+
+                        <th>
+                            Book
+                        </th>
+
+                        <th>
+                            Date & Time
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
                     </tr>
 
                 </thead>
 
                 <tbody>
+
                     ${tableContent}
+
                 </tbody>
 
             </table>
 
         </div>
+
     `;
 }
 
 
 function showProfile(addHistory = true) {
+
     if (addHistory) {
+
         navigateTo("profile");
+
         return;
     }
 
     currentPage = "profile";
+
     setPageTitle("Profile");
 
-    const username =
-        document.getElementById("username")
-            .value.trim();
+    const account =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryAccount"
+            )
+        ) || {};
 
     const studentId =
-        username || "Student";
+        account.studentId ||
+        document.getElementById("username")?.value.trim() ||
+        "Student";
 
     const avatar =
         studentId
@@ -1814,6 +2372,7 @@ function showProfile(addHistory = true) {
         document.getElementById("content");
 
     content.innerHTML = `
+
         <button
             type="button"
             class="back-button"
@@ -1859,33 +2418,69 @@ function showProfile(addHistory = true) {
             <div class="profile-info">
 
                 <div class="profile-row">
-                    <span>Student ID</span>
-                    <span>${studentId}</span>
+
+                    <span>
+                        Student ID
+                    </span>
+
+                    <span>
+                        ${studentId}
+                    </span>
+
                 </div>
 
                 <div class="profile-row">
-                    <span>Account Type</span>
-                    <span>Student</span>
+
+                    <span>
+                        Account Type
+                    </span>
+
+                    <span>
+                        Student
+                    </span>
+
                 </div>
 
                 <div class="profile-row">
-                    <span>Books in Basket</span>
-                    <span>${basket.length}</span>
+
+                    <span>
+                        My Reserved
+                    </span>
+
+                    <span>
+                        ${reserved.length}
+                    </span>
+
                 </div>
 
                 <div class="profile-row">
-                    <span>Ongoing Books</span>
-                    <span>${ongoingBooks.length}</span>
+
+                    <span>
+                        Ongoing Books
+                    </span>
+
+                    <span>
+                        ${ongoingBooks.length}
+                    </span>
+
                 </div>
 
                 <div class="profile-row">
-                    <span>Total Reservations</span>
-                    <span>${reservations.length}</span>
+
+                    <span>
+                        Total Reservations
+                    </span>
+
+                    <span>
+                        ${reservations.length}
+                    </span>
+
                 </div>
 
             </div>
 
         </div>
+
     `;
 }
 
@@ -1895,44 +2490,168 @@ document.addEventListener(
     function(event) {
 
         const basketModal =
-            document.getElementById("basketModal");
+            document.getElementById(
+                "basketModal"
+            );
 
         const deleteModal =
-            document.getElementById("deleteModal");
+            document.getElementById(
+                "deleteModal"
+            );
 
         const receiptModal =
-            document.getElementById("receiptModal");
+            document.getElementById(
+                "receiptModal"
+            );
 
         if (
             event.target === basketModal
         ) {
+
             closeBasket();
+
         }
 
         if (
             event.target === deleteModal
         ) {
+
             closeDeleteModal();
+
         }
 
         if (
             event.target === receiptModal
         ) {
+
             closeReceipt();
+
         }
+
     }
 );
+
+
+function loadUserReservations() {
+
+    const account =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryAccount"
+            )
+        ) || null;
+
+    if (!account) {
+
+        reservations = [];
+
+        ongoingBooks = [];
+
+        return;
+    }
+
+    const allReservations =
+        JSON.parse(
+            localStorage.getItem(
+                "auLibraryReservations"
+            )
+        ) || [];
+
+    reservations =
+        allReservations.filter(
+            reservation =>
+                reservation.studentId ===
+                account.studentId
+        );
+
+    ongoingBooks = [];
+
+    reservations.forEach(
+        reservation => {
+
+            if (
+                !reservation.books
+            ) {
+                return;
+            }
+
+            reservation.books.forEach(
+                savedBook => {
+
+                    const book =
+                        books.find(
+                            item =>
+                                item.title ===
+                                savedBook.title
+                        );
+
+                    if (book) {
+
+                        ongoingBooks.push({
+
+                            id:
+                                book.id,
+
+                            title:
+                                book.title,
+
+                            author:
+                                book.author,
+
+                            reservationId:
+                                reservation.id,
+
+                            studentId:
+                                reservation.studentId,
+
+                            date:
+                                reservation.date,
+
+                            status:
+                                "Ongoing"
+
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
 
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
-        document.getElementById("mainApp")
-            .style.display = "none";
+        const mainApp =
+            document.getElementById(
+                "mainApp"
+            );
 
-        document.getElementById("loginPage")
-            .style.display = "flex";
+        const loginPage =
+            document.getElementById(
+                "loginPage"
+            );
+
+        if (mainApp) {
+
+            mainApp.style.display =
+                "none";
+
+        }
+
+        if (loginPage) {
+
+            loginPage.style.display =
+                "flex";
+
+        }
+
+        loadUserReservations();
 
         updateBasketCount();
 

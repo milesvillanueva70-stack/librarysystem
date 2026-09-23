@@ -1301,3 +1301,161 @@ button {
     margin-bottom: 0 !important;
     padding-right: 50px !important;
 }
+
+.reserve-menu-icon,
+.open-book-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.reserve-menu-icon {
+    width: 24px;
+    min-width: 24px;
+    font-size: 20px;
+}
+
+.top-basket-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.top-basket-button:hover {
+    background: #dff4f4;
+    transform: translateY(-1px);
+}
+
+.open-book-icon {
+    font-size: 22px;
+}
+
+.basket-modal {
+    max-width: 700px;
+}
+
+.basket-modal .modal-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.basket-modal .modal-header h2 {
+    font-size: 21px;
+}
+
+.basket-list {
+    min-height: 80px;
+}
+
+.basket-item {
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+}
+
+.basket-item:hover {
+    border-color: #9dd9da;
+    box-shadow: 0 5px 16px rgba(0, 124, 131, 0.08);
+    transform: translateY(-1px);
+}
+
+.basket-book-icon {
+    background: #e9f7f7;
+    color: #007c83;
+}
+
+.reserve-button {
+    min-width: 150px;
+}
+
+.admin-site-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+    color: #003b5c;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.admin-site-link:hover {
+    color: #007c83;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .top-basket-button {
+        width: 42px;
+        height: 42px;
+    }
+
+    .basket-modal {
+        padding: 20px;
+    }
+
+    .basket-item {
+        gap: 10px;
+    }
+
+    .modal-actions {
+        flex-wrap: wrap;
+    }
+
+    .modal-actions button {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+.top-basket-button {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 26px;
+    transition: 0.2s ease;
+}
+
+.top-basket-button:hover {
+    transform: scale(1.05);
+}
+
+.open-book-icon {
+    font-size: 27px;
+    line-height: 1;
+}
+
+.basket-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+
+    background: #ef4444;
+    color: white;
+
+    border-radius: 50%;
+
+    font-size: 11px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

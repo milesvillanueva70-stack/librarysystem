@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AU Library - Admin Site</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .admin-login-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #0b1f3a, #2563eb);
+        }
+
+        .admin-login-box {
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .admin-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .admin-login-box h1 {
+            text-align: center;
+            color: #0b1f3a;
+            margin-bottom: 7px;
+        }
+
+        .admin-login-box > p {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 17px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 48px;
+            padding: 0 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            color: #1f2937;
+            background: #ffffff;
+            transition: 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .input-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .input-wrapper input {
+            padding-right: 45px;
+        }
+
+        .password-eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #6b7280;
+            user-select: none;
+        }
+
+        .admin-login-btn,
+        .forgot-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .admin-login-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .admin-login-btn:hover,
+        .forgot-btn:hover,
+        .signup-btn:hover,
+        .refresh-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: 9px;
+            margin-bottom: 18px;
+            color: #2563eb;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-error {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fee2e2;
+            color: #b91c1c;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .back-student {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-modal,
+        .signup-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .forgot-box,
+        .signup-box {
+            width: 100%;
+            max-width: 440px;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .forgot-close,
+        .signup-close {
+            position: absolute;
+            right: 18px;
+            top: 12px;
+            border: none;
+            background: none;
+            font-size: 25px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .forgot-box h2,
+        .signup-box h2 {
+            color: #0b1f3a;
+            margin-bottom: 7px;
+        }
+
+        .forgot-description,
+        .signup-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .forgot-step {
+            display: none;
+        }
+
+        .forgot-step.active {
+            display: block;
+        }
+
+        .forgot-btn {
+            background: #2563eb;
+            color: white;
+            margin-top: 5px;
+        }
+
+        .otp-input {
+            width: 100% !important;
+            height: 52px !important;
+            padding: 0 15px !important;
+            text-align: center;
+            font-size: 22px !important;
+            font-weight: 600;
+            letter-spacing: 8px;
+            border: 1px solid #d1d5db !important;
+            border-radius: 10px !important;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .otp-timer {
+            text-align: center;
+            color: #2563eb;
+            font-size: 13px;
+            margin: 12px 0;
+        }
+
+        .forgot-message,
+        .signup-message {
+            display: none;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .forgot-message.success,
+        .signup-message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .forgot-message.error,
+        .signup-message.error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .password-rules {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 7px;
+            line-height: 1.5;
+        }
+
+        .admin-signup-text {
+            text-align: center;
+            margin-top: 18px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .admin-signup-link,
+        .signin-text button {
+            border: none;
+            background: none;
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .admin-signup-link:hover,
+        .signin-text button:hover {
+            text-decoration: underline;
+        }
+
+        .signup-modal {
+            z-index: 1100;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .signin-text {
+            text-align: center;
+            margin-top: 18px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .admin-app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: #0b1f3a;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            background: white;
+            border-radius: 8px;
+            padding: 3px;
+        }
+
+        .admin-header h2 {
+            font-size: 21px;
+        }
+
+        .admin-header span {
+            display: block;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .logout-btn {
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: transparent;
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            color: #0b1f3a;
+            margin-bottom: 6px;
+        }
+
+        .page-heading p {
+            color: #6b7280;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 23px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-card .icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h3 {
+            font-size: 30px;
+            color: #0b1f3a;
+            margin-bottom: 4px;
+        }
+
+        .stat-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .reservation-section {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-top h2 {
+            color: #0b1f3a;
+        }
+
+        .refresh-btn {
+            padding: 9px 15px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .reservation-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        .reservation-table th {
+            background: #f1f5f9;
+            color: #374151;
+            text-align: left;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        .reservation-table td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        .reservation-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-reserved {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .empty-table {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6b7280;
+        }
+
+        .empty-table .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .book-item {
+            background: #f8fafc;
+            padding: 7px 9px;
+            border-radius: 6px;
+        }
+
+        .book-title {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .book-author {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 800px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-container {
+                padding: 20px;
+            }
+
+            .admin-header {
+                padding: 15px 20px;
+            }
+
+            .section-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .admin-login-box {
+                padding: 25px 20px;
+            }
+
+            .admin-header-left {
+                gap: 9px;
+            }
+
+            .admin-header-logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .admin-header h2 {
+                font-size: 15px;
+            }
+
+            .logout-btn {
+                padding: 7px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="admin-login-page" id="adminLoginPage">
+
+        <div class="admin-login-box">
+
+            <div class="admin-logo">
+                <img src="images/Au Logo.jpg" alt="AU Logo">
+            </div>
+
+            <h1>Admin Site</h1>
+
+            <p>AU Library Reservation System</p>
+
+            <form id="adminLoginForm">
+
+                <div class="input-group">
+
+                    <label for="adminEmail">
+                        PHINMA Account
+                    </label>
+
+                    <input
+                        type="email"
+                        id="adminEmail"
+                        placeholder="Enter your PHINMA account"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+                <div class="input-group">
+
+                    <label for="adminPassword">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <span
+                            class="password-eye"
+                            onclick="toggleAdminPassword()"
+                            id="adminPasswordEye"
+                        >
+                            👁
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="forgot-link"
+                    onclick="openForgotPassword()"
+                >
+                    Forgot Password?
+                </div>
+
+                <button
+                    type="submit"
+                    class="admin-login-btn"
+                >
+                    Login as Admin
+                </button>
+
+                <div class="admin-signup-text">
+
+                    Don't have an account?
+
+                    <button
+                        type="button"
+                        class="admin-signup-link"
+                        onclick="openAdminSignup()"
+                    >
+                        Sign Up
+                    </button>
+
+                </div>
+
+                <div
+                    class="login-error"
+                    id="loginError"
+                >
+                    Invalid PHINMA account or password.
+                </div>
+
+            </form>
+
+            <a
+                href="index.html"
+                class="back-student"
+            >
+                ← Back to Student Site
+            </a>
+
+        </div>
+
+    </div>
+
+    <div
+        class="forgot-modal"
+        id="forgotModal"
+    >
+
+        <div class="forgot-box">
+
+            <button
+                type="button"
+                class="forgot-close"
+                onclick="closeForgotPassword()"
+            >
+                ×
+            </button>
+
+            <div
+                class="forgot-step active"
+                id="forgotStep1"
+            >
+
+                <h2>Forgot Password</h2>
+
+                <p class="forgot-description">
+                    Enter your PHINMA account to receive a verification OTP.
+                </p>
+
+                <div class="input-group">
+
+                    <label for="forgotEmail">
+                        PHINMA Account
+                    </label>
+
+                    <input
+                        type="email"
+                        id="forgotEmail"
+                        placeholder="Enter your PHINMA account"
+                    >
+
+                </div>
+
+                <button
+                    type="button"
+                    class="forgot-btn"
+                    onclick="sendAdminOTP()"
+                >
+                    Send OTP
+                </button>
+
+                <div
+                    class="forgot-message"
+                    id="forgotMessage1"
+                ></div>
+
+            </div>
+
+            <div
+                class="forgot-step"
+                id="forgotStep2"
+            >
+
+                <h2>Verify OTP</h2>
+
+                <p class="forgot-description">
+                    Enter the 6-digit OTP sent to your PHINMA account.
+                </p>
+
+                <div class="input-group">
+
+                    <label for="otpInput">
+                        OTP
+                    </label>
+
+                    <input
+                        type="text"
+                        id="otpInput"
+                        class="otp-input"
+                        maxlength="6"
+                        inputmode="numeric"
+                        placeholder="000000"
+                    >
+
+                </div>
+
+                <div
+                    class="otp-timer"
+                    id="otpTimer"
+                >
+                    OTP expires in 150:00
+                </div>
+
+                <button
+                    type="button"
+                    class="forgot-btn"
+                    onclick="verifyAdminOTP()"
+                >
+                    Verify OTP
+                </button>
+
+                <div
+                    class="forgot-message"
+                    id="forgotMessage2"
+                ></div>
+
+            </div>
+
+            <div
+                class="forgot-step"
+                id="forgotStep3"
+            >
+
+                <h2>Create New Password</h2>
+
+                <p class="forgot-description">
+                    Enter your new admin password.
+                </p>
+
+                <div class="input-group">
+
+                    <label for="newPassword">
+                        New Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            placeholder="Enter new password"
+                        >
+
+                        <span
+                            class="password-eye"
+                            onclick="toggleNewPassword(this)"
+                        >
+                            👁
+                        </span>
+
+                    </div>
+
+                    <div class="password-rules">
+                        8–16 characters and the first character must be uppercase.
+                    </div>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="confirmNewPassword">
+                        Confirm Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="password"
+                            id="confirmNewPassword"
+                            placeholder="Confirm new password"
+                        >
+
+                        <span
+                            class="password-eye"
+                            onclick="toggleConfirmPassword(this)"
+                        >
+                            👁
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="forgot-btn"
+                    onclick="resetAdminPassword()"
+                >
+                    Reset Password
+                </button>
+
+                <div
+                    class="forgot-message"
+                    id="forgotMessage3"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div
+        class="signup-modal"
+        id="signupModal"
+    >
+
+        <div class="signup-box">
+
+            <button
+                type="button"
+                class="signup-close"
+                onclick="closeAdminSignup()"
+            >
+                ×
+            </button>
+
+            <h2>Create Admin Account</h2>
+
+            <p class="signup-description">
+                Register your PHINMA account to access the AU Library Admin Site.
+            </p>
+
+            <form id="adminSignupForm">
+
+                <div class="input-group">
+
+                    <label for="signupEmail">
+                        PHINMA Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        placeholder="Enter your PHINMA email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="signupPassword">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="password"
+                            id="signupPassword"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <span
+                            class="password-eye"
+                            onclick="toggleSignupPassword(this)"
+                        >
+                            👁
+                        </span>
+
+                    </div>
+
+                    <div class="password-rules">
+                        8–16 characters and the first character must be uppercase.
+                    </div>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="signupConfirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="password"
+                            id="signupConfirmPassword"
+                            placeholder="Confirm your password"
+                            required
+                        >
+
+                        <span
+                            class="password-eye"
+                            onclick="toggleSignupConfirmPassword(this)"
+                        >
+                            👁
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="signup-btn"
+                >
+                    Create Account
+                </button>
+
+                <div
+                    class="signup-message"
+                    id="signupMessage"
+                ></div>
+
+                <div class="signin-text">
+
+                    Already have an account?
+
+                    <button
+                        type="button"
+                        onclick="backToAdminSignIn()"
+                    >
+                        Sign In
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div
+        class="admin-app"
+        id="adminApp"
+    >
+
+        <!-- ONLY ONE ADMIN HEADER -->
+
+        <header class="admin-header">
+
+            <div class="admin-header-left">
+
+                <img
+                    src="images/Au Logo.jpg"
+                    alt="AU Logo"
+                    class="admin-header-logo"
+                >
+
+                <div>
+
+                    <h2>
+                        AU Library Admin
+                    </h2>
+
+                    <span>
+                        Reservation Management
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="logout-btn"
+                onclick="adminLogout()"
+            >
+                Logout
+            </button>
+
+        </header>
+
+
+        <main class="admin-container">
+
+            <div class="page-heading">
+
+                <h1>
+                    Reservation Dashboard
+                </h1>
+
+                <p>
+                    View and monitor student book reservations.
+                </p>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="icon">
+                        📋
+                    </div>
+
+                    <h3 id="totalReservations">
+                        0
+                    </h3>
+
+                    <p>
+                        Total Reservations
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="icon">
+                        👨‍🎓
+                    </div>
+
+                    <h3 id="totalStudents">
+                        0
+                    </h3>
+
+                    <p>
+                        Students with Reservations
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="icon">
+                        📚
+                    </div>
+
+                    <h3 id="totalBooks">
+                        0
+                    </h3>
+
+                    <p>
+                        Reserved Books
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <section class="reservation-section">
+
+                <div class="section-top">
+
+                    <h2>
+                        Student Reservations
+                    </h2>
+
+                    <button
+                        type="button"
+                        class="refresh-btn"
+                        onclick="loadReservations()"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="reservation-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Student ID
+                                </th>
+
+                                <th>
+                                    Reservation ID
+                                </th>
+
+                                <th>
+                                    Reserved Books
+                                </th>
+
+                                <th>
+                                    Date & Time
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="reservationTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+
+        const DEFAULT_ADMIN_EMAIL =
+            "YOUR_PHINMA_ACCOUNT@phinmaed.com";
+
+        const DEFAULT_ADMIN_PASSWORD =
+            "Admin123";
+
+        const EMAILJS_SERVICE =
+            "service_md5pntj";
+
+        const EMAILJS_TEMPLATE =
+            "template_xpxz9oa";
+
+        emailjs.init({
+            publicKey: "s5jj3jjdlMzRWvQ2S"
+        });
+
+
+        let generatedOTP = "";
+        let otpExpiration = 0;
+        let otpTimerInterval = null;
+        let otpVerified = false;
+
+        function getAdminEmail() {
+
+            return localStorage.getItem("auAdminEmail")
+                || DEFAULT_ADMIN_EMAIL;
+
+        }
+
+        document
+            .getElementById("adminLoginForm")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+                const email =
+                    document
+                        .getElementById("adminEmail")
+                        .value
+                        .trim();
+
+                const password =
+                    document
+                        .getElementById("adminPassword")
+                        .value;
+
+                const error =
+                    document
+                        .getElementById("loginError");
+
+
+                let savedAdminAccount = null;
+
+                try {
+
+                    savedAdminAccount =
+                        JSON.parse(
+                            localStorage.getItem("auAdminAccount")
+                        );
+
+                } catch (error) {
+
+                    savedAdminAccount = null;
+
+                }
+
+
+                const loginEmail =
+                    savedAdminAccount
+                        ? savedAdminAccount.email
+                        : getAdminEmail();
+
+
+                const savedPassword =
+                    savedAdminAccount
+                        ? savedAdminAccount.password
+                        : (
+                            localStorage.getItem("auAdminPassword")
+                            || DEFAULT_ADMIN_PASSWORD
+                        );
+
+
+                if (
+                    email.toLowerCase() ===
+                        loginEmail.toLowerCase()
+                    &&
+                    password === savedPassword
+                ) {
+
+                    error.style.display = "none";
+
+                    localStorage.setItem(
+                        "auAdminLoggedIn",
+                        "true"
+                    );
+
+                    showAdminDashboard();
+
+                } else {
+
+                    error.style.display = "block";
+
+                }
+
+            });
+
+        function showAdminDashboard() {
+
+            document
+                .getElementById("adminLoginPage")
+                .style.display = "none";
+
+            document
+                .getElementById("adminApp")
+                .style.display = "block";
+
+            loadReservations();
+
+        }
+
+        function toggleAdminPassword() {
+
+            const input =
+                document.getElementById("adminPassword");
+
+            const eye =
+                document.getElementById("adminPasswordEye");
+
+
+            if (input.type === "password") {
+
+                input.type = "text";
+                eye.textContent = "🙈";
+
+            } else {
+
+                input.type = "password";
+                eye.textContent = "👁";
+
+            }
+
+        }
+
+
+        function toggleNewPassword(eye) {
+
+            const input =
+                document.getElementById("newPassword");
+
+
+            if (input.type === "password") {
+
+                input.type = "text";
+                eye.textContent = "🙈";
+
+            } else {
+
+                input.type = "password";
+                eye.textContent = "👁";
+
+            }
+
+        }
+
+
+        function toggleConfirmPassword(eye) {
+
+            const input =
+                document.getElementById("confirmNewPassword");
+
+
+            if (input.type === "password") {
+
+                input.type = "text";
+                eye.textContent = "🙈";
+
+            } else {
+
+                input.type = "password";
+                eye.textContent = "👁";
+
+            }
+
+        }
+
+
+        function toggleSignupPassword(eye) {
+
+            const input =
+                document.getElementById("signupPassword");
+
+
+            if (input.type === "password") {
+
+                input.type = "text";
+                eye.textContent = "🙈";
+
+            } else {
+
+                input.type = "password";
+                eye.textContent = "👁";
+
+            }
+
+        }
+
+
+        function toggleSignupConfirmPassword(eye) {
+
+            const input =
+                document.getElementById("signupConfirmPassword");
+
+
+            if (input.type === "password") {
+
+                input.type = "text";
+                eye.textContent = "🙈";
+
+            } else {
+
+                input.type = "password";
+                eye.textContent = "👁";
+
+            }
+
+        }
+
+        function openForgotPassword() {
+
+            document
+                .getElementById("forgotModal")
+                .style.display = "flex";
+
+
+            showForgotStep(1);
+
+
+            document
+                .getElementById("forgotEmail")
+                .value =
+                document
+                    .getElementById("adminEmail")
+                    .value
+                    .trim();
+
+
+            clearForgotMessages();
+
+        }
+
+
+        function closeForgotPassword() {
+
+            document
+                .getElementById("forgotModal")
+                .style.display = "none";
+
+
+            if (otpTimerInterval) {
+
+                clearInterval(otpTimerInterval);
+
+                otpTimerInterval = null;
+
+            }
+
+
+            otpVerified = false;
+
+        }
+
+
+        function showForgotStep(step) {
+
+            document
+                .querySelectorAll(".forgot-step")
+                .forEach(function(element) {
+
+                    element.classList.remove("active");
+
+                });
+
+
+            document
+                .getElementById("forgotStep" + step)
+                .classList.add("active");
+
+        }
+
+
+        function clearForgotMessages() {
+
+            document
+                .querySelectorAll(".forgot-message")
+                .forEach(function(element) {
+
+                    element.style.display = "none";
+                    element.textContent = "";
+                    element.className = "forgot-message";
+
+                });
+
+        }
+
+
+        function showForgotMessage(
+            id,
+            message,
+            type
+        ) {
+
+            const element =
+                document.getElementById(id);
+
+
+            element.textContent = message;
+
+            element.className =
+                "forgot-message " + type;
+
+            element.style.display = "block";
+
+        }
+
+        async function sendAdminOTP() {
+
+            const email =
+                document
+                    .getElementById("forgotEmail")
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            if (!email) {
+
+                showForgotMessage(
+                    "forgotMessage1",
+                    "Please enter your PHINMA email.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!email.endsWith("@phinmaed.com")) {
+
+                showForgotMessage(
+                    "forgotMessage1",
+                    "Please use a valid PHINMA email ending with @phinmaed.com.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            generatedOTP =
+                Math.floor(
+                    100000 +
+                    Math.random() * 900000
+                ).toString();
+
+
+            otpExpiration =
+                Date.now() +
+                (150 * 60 * 1000);
+
+
+            localStorage.setItem(
+                "auAdminOTP",
+                generatedOTP
+            );
+
+
+            localStorage.setItem(
+                "auAdminOTPExpiration",
+                otpExpiration.toString()
+            );
+
+
+            try {
+
+                await emailjs.send(
+                    EMAILJS_SERVICE,
+                    EMAILJS_TEMPLATE,
+                    {
+                        to_email: email,
+                        email: email,
+                        otp: generatedOTP,
+                        passcode: generatedOTP,
+                        message:
+                            "Your AU Library Admin verification OTP is "
+                            + generatedOTP
+                            + ". This OTP is valid for 150 minutes."
+                    }
+                );
+
+
+                showForgotStep(2);
+
+                startAdminOTPTimer();
+
+
+                showForgotMessage(
+                    "forgotMessage2",
+                    "OTP has been sent to your PHINMA email.",
+                    "success"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "EmailJS Error:",
+                    error
+                );
+
+
+                showForgotMessage(
+                    "forgotMessage1",
+                    "Failed to send OTP. Please check your EmailJS configuration.",
+                    "error"
+                );
+
+            }
+
+        }
+
+        function startAdminOTPTimer() {
+
+            if (otpTimerInterval) {
+
+                clearInterval(
+                    otpTimerInterval
+                );
+
+            }
+
+
+            updateAdminOTPTimer();
+
+
+            otpTimerInterval =
+                setInterval(
+                    updateAdminOTPTimer,
+                    1000
+                );
+
+        }
+
+
+        function updateAdminOTPTimer() {
+
+            const remaining =
+                otpExpiration -
+                Date.now();
+
+
+            const timer =
+                document.getElementById(
+                    "otpTimer"
+                );
+
+
+            if (remaining <= 0) {
+
+                clearInterval(
+                    otpTimerInterval
+                );
+
+                timer.textContent =
+                    "OTP has expired.";
+
+                return;
+
+            }
+
+
+            const totalSeconds =
+                Math.floor(
+                    remaining / 1000
+                );
+
+
+            const minutes =
+                Math.floor(
+                    totalSeconds / 60
+                );
+
+
+            const seconds =
+                totalSeconds % 60;
+
+
+            timer.textContent =
+                "OTP expires in "
+                +
+                String(minutes).padStart(2, "0")
+                +
+                ":"
+                +
+                String(seconds).padStart(2, "0");
+
+        }
+
+        function verifyAdminOTP() {
+
+            const enteredOTP =
+                document
+                    .getElementById("otpInput")
+                    .value
+                    .trim();
+
+
+            const savedOTP =
+                localStorage.getItem(
+                    "auAdminOTP"
+                );
+
+
+            const savedExpiration =
+                Number(
+                    localStorage.getItem(
+                        "auAdminOTPExpiration"
+                    )
+                );
+
+
+            if (!enteredOTP) {
+
+                showForgotMessage(
+                    "forgotMessage2",
+                    "Please enter the OTP.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !savedExpiration ||
+                Date.now() > savedExpiration
+            ) {
+
+                showForgotMessage(
+                    "forgotMessage2",
+                    "The OTP has expired. Please request a new one.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (enteredOTP !== savedOTP) {
+
+                showForgotMessage(
+                    "forgotMessage2",
+                    "Incorrect OTP. Please try again.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            otpVerified = true;
+
+
+            if (otpTimerInterval) {
+
+                clearInterval(
+                    otpTimerInterval
+                );
+
+                otpTimerInterval = null;
+
+            }
+
+
+            showForgotStep(3);
+
+
+            showForgotMessage(
+                "forgotMessage3",
+                "OTP verified. You can now create a new password.",
+                "success"
+            );
+
+        }
+
+        function resetAdminPassword() {
+
+            if (!otpVerified) {
+
+                showForgotMessage(
+                    "forgotMessage3",
+                    "Please verify the OTP first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const newPassword =
+                document
+                    .getElementById("newPassword")
+                    .value;
+
+
+            const confirmPassword =
+                document
+                    .getElementById("confirmNewPassword")
+                    .value;
+
+
+            const passwordPattern =
+                /^[A-Z].{7,15}$/;
+
+
+            if (!passwordPattern.test(newPassword)) {
+
+                showForgotMessage(
+                    "forgotMessage3",
+                    "Password must be 8–16 characters and start with an uppercase letter.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                newPassword !==
+                confirmPassword
+            ) {
+
+                showForgotMessage(
+                    "forgotMessage3",
+                    "Passwords do not match.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            localStorage.setItem(
+                "auAdminPassword",
+                newPassword
+            );
+
+
+            let currentAccount = null;
+
+
+            try {
+
+                currentAccount =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "auAdminAccount"
+                        )
+                    );
+
+            } catch (error) {
+
+                currentAccount = null;
+
+            }
+
+
+            if (currentAccount) {
+
+                currentAccount.password =
+                    newPassword;
+
+
+                localStorage.setItem(
+                    "auAdminAccount",
+                    JSON.stringify(
+                        currentAccount
+                    )
+                );
+
+            }
+
+
+            localStorage.removeItem(
+                "auAdminOTP"
+            );
+
+            localStorage.removeItem(
+                "auAdminOTPExpiration"
+            );
+
+
+            otpVerified = false;
+
+
+            showForgotMessage(
+                "forgotMessage3",
+                "Password changed successfully. You can now login.",
+                "success"
+            );
+
+
+            setTimeout(function() {
+
+                closeForgotPassword();
+
+                showForgotStep(1);
+
+                document
+                    .getElementById(
+                        "adminPassword"
+                    )
+                    .value = "";
+
+            }, 1500);
+
+        }
+
+        function openAdminSignup() {
+
+            const modal =
+                document.getElementById(
+                    "signupModal"
+                );
+
+
+            modal.style.display = "flex";
+
+
+            document
+                .getElementById("signupEmail")
+                .value = "";
+
+            document
+                .getElementById("signupPassword")
+                .value = "";
+
+            document
+                .getElementById(
+                    "signupConfirmPassword"
+                )
+                .value = "";
+
+
+            clearSignupMessage();
+
+        }
+
+
+        function closeAdminSignup() {
+
+            document
+                .getElementById("signupModal")
+                .style.display = "none";
+
+        }
+
+
+        function backToAdminSignIn() {
+
+            closeAdminSignup();
+
+            document
+                .getElementById("adminLoginPage")
+                .style.display = "flex";
+
+            document
+                .getElementById("adminEmail")
+                .focus();
+
+        }
+
+
+        function clearSignupMessage() {
+
+            const message =
+                document.getElementById(
+                    "signupMessage"
+                );
+
+
+            message.style.display = "none";
+            message.textContent = "";
+            message.className =
+                "signup-message";
+
+        }
+
+
+        function showSignupMessage(
+            message,
+            type
+        ) {
+
+            const element =
+                document.getElementById(
+                    "signupMessage"
+                );
+
+
+            element.textContent = message;
+
+            element.className =
+                "signup-message " + type;
+
+            element.style.display =
+                "block";
+
+        }
+
+
+        document
+            .getElementById("adminSignupForm")
+            .addEventListener(
+                "submit",
+                function(event) {
+
+                    event.preventDefault();
+
+
+                    const email =
+                        document
+                            .getElementById(
+                                "signupEmail"
+                            )
+                            .value
+                            .trim()
+                            .toLowerCase();
+
+
+                    const password =
+                        document
+                            .getElementById(
+                                "signupPassword"
+                            )
+                            .value;
+
+
+                    const confirmPassword =
+                        document
+                            .getElementById(
+                                "signupConfirmPassword"
+                            )
+                            .value;
+
+
+                    if (!email) {
+
+                        showSignupMessage(
+                            "Please enter your PHINMA email.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !email.endsWith(
+                            "@phinmaed.com"
+                        )
+                    ) {
+
+                        showSignupMessage(
+                            "Please use a valid PHINMA email address ending with @phinmaed.com.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const passwordPattern =
+                        /^[A-Z].{7,15}$/;
+
+
+                    if (
+                        !passwordPattern.test(
+                            password
+                        )
+                    ) {
+
+                        showSignupMessage(
+                            "Password must be 8–16 characters and start with an uppercase letter.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        password !==
+                        confirmPassword
+                    ) {
+
+                        showSignupMessage(
+                            "Passwords do not match.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const adminAccount = {
+
+                        email: email,
+                        password: password
+
+                    };
+
+
+                    localStorage.setItem(
+                        "auAdminAccount",
+                        JSON.stringify(
+                            adminAccount
+                        )
+                    );
+
+
+                    localStorage.setItem(
+                        "auAdminEmail",
+                        email
+                    );
+
+
+                    localStorage.setItem(
+                        "auAdminPassword",
+                        password
+                    );
+
+
+                    showSignupMessage(
+                        "Account created successfully! You can now Sign In.",
+                        "success"
+                    );
+
+
+                    setTimeout(function() {
+
+                        closeAdminSignup();
+
+
+                        document
+                            .getElementById(
+                                "adminEmail"
+                            )
+                            .value = email;
+
+
+                        document
+                            .getElementById(
+                                "adminPassword"
+                            )
+                            .value = "";
+
+
+                        document
+                            .getElementById(
+                                "adminEmail"
+                            )
+                            .focus();
+
+                    }, 1500);
+
+                }
+            );
+
+        document
+            .getElementById("signupModal")
+            .addEventListener(
+                "click",
+                function(event) {
+
+                    if (event.target === this) {
+
+                        closeAdminSignup();
+
+                    }
+
+                }
+            );
+
+        function loadReservations() {
+
+            let reservations = [];
+
+
+            try {
+
+                reservations =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "auLibraryReservations"
+                        )
+                    ) || [];
+
+            } catch (error) {
+
+                reservations = [];
+
+            }
+
+
+            document
+                .getElementById(
+                    "totalReservations"
+                )
+                .textContent =
+                reservations.length;
+
+
+            const studentIds =
+                new Set(
+                    reservations
+                        .map(
+                            reservation =>
+                                reservation.studentId
+                        )
+                        .filter(Boolean)
+                );
+
+
+            document
+                .getElementById(
+                    "totalStudents"
+                )
+                .textContent =
+                studentIds.size;
+
+
+            let totalBooks = 0;
+
+
+            reservations.forEach(
+                function(reservation) {
+
+                    if (
+                        Array.isArray(
+                            reservation.books
+                        )
+                    ) {
+
+                        totalBooks +=
+                            reservation.books.length;
+
+                    }
+
+                }
+            );
+
+
+            document
+                .getElementById(
+                    "totalBooks"
+                )
+                .textContent =
+                totalBooks;
+
+
+            const tableBody =
+                document.getElementById(
+                    "reservationTableBody"
+                );
+
+
+            if (reservations.length === 0) {
+
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-table">
+                            <div class="empty-icon">📚</div>
+                            <strong>No reservations yet</strong>
+                            <p>Student reservations will appear here.</p>
+                        </td>
+                    </tr>
+                `;
+
+                return;
+
+            }
+
+
+            tableBody.innerHTML = "";
+
+
+            reservations
+                .slice()
+                .reverse()
+                .forEach(
+                    function(reservation) {
+
+                        let bookHTML =
+                            `<div class="book-list">`;
+
+
+                        if (
+                            Array.isArray(
+                                reservation.books
+                            )
+                            &&
+                            reservation.books.length > 0
+                        ) {
+
+                            reservation.books.forEach(
+                                function(book) {
+
+                                    bookHTML += `
+                                        <div class="book-item">
+
+                                            <div class="book-title">
+                                                ${escapeHTML(
+                                                    book.title ||
+                                                    "Unknown Book"
+                                                )}
+                                            </div>
+
+                                            <div class="book-author">
+                                                ${escapeHTML(
+                                                    book.author ||
+                                                    "Unknown Author"
+                                                )}
+                                            </div>
+
+                                        </div>
+                                    `;
+
+                                }
+                            );
+
+                        } else {
+
+                            bookHTML += `
+                                <div class="book-item">
+                                    No books
+                                </div>
+                            `;
+
+                        }
+
+
+                        bookHTML +=
+                            `</div>`;
+
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                ${escapeHTML(
+                                    reservation.studentId ||
+                                    "N/A"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    reservation.id ||
+                                    "N/A"
+                                )}
+                            </td>
+
+                            <td>
+                                ${bookHTML}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    reservation.date ||
+                                    "N/A"
+                                )}
+                            </td>
+
+                            <td>
+
+                                <span class="status status-reserved">
+
+                                    ${escapeHTML(
+                                        reservation.status ||
+                                        "Reserved"
+                                    )}
+
+                                </span>
+
+                            </td>
+
+                        `;
+
+
+                        tableBody.appendChild(row);
+
+                    }
+                );
+
+        }
+
+        function escapeHTML(value) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+        function adminLogout() {
+
+            localStorage.removeItem(
+                "auAdminLoggedIn"
+            );
+
+
+            document
+                .getElementById("adminApp")
+                .style.display = "none";
+
+
+            document
+                .getElementById("adminLoginPage")
+                .style.display = "flex";
+
+
+            document
+                .getElementById("adminEmail")
+                .value = "";
+
+
+            document
+                .getElementById("adminPassword")
+                .value = "";
+
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const loggedIn =
+                    localStorage.getItem(
+                        "auAdminLoggedIn"
+                    );
+
+
+                if (loggedIn === "true") {
+
+                    showAdminDashboard();
+
+                }
+
+            }
+        );
+
+        document
+            .getElementById("forgotModal")
+            .addEventListener(
+                "click",
+                function(event) {
+
+                    if (event.target === this) {
+
+                        closeForgotPassword();
+
+                    }
+
+                }
+            );
+
+        document
+            .getElementById("otpInput")
+            .addEventListener(
+                "input",
+                function() {
+
+                    this.value =
+                        this.value
+                            .replace(
+                                /[^0-9]/g,
+                                ""
+                            )
+                            .slice(
+                                0,
+                                6
+                            );
+
+                }
+            );
+
+    </script>
+
+</body>
+
+</html>

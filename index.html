@@ -17,7 +17,7 @@
     <div class="login-box">
 
         <div class="logo">
-            <img src="images/phinma-removebg-preview.png" alt="PHINMA logo">
+            <img src="images/Au Logo.jpg" alt="AU logo">
         </div>
 
         <h1>AU Library Reservation</h1>
@@ -90,6 +90,13 @@
     </button>
 </p>
 
+<a
+    href="admin.html"
+    class="admin-site-link"
+>
+    🔐 Admin Site
+</a>
+
     </div>
     </div>
 
@@ -148,9 +155,10 @@
                 <button
                     type="button"
                     onclick="openBasket()"
+                    aria-label="Open reserved books"
                 >
-                    <span>&#128722;</span>
-                    My Basket
+                    <span class="reserve-menu-icon">📖</span>
+                    Reserve
 
                     <span
                         class="basket-count"
@@ -206,16 +214,15 @@
 
 
                 <button
-                    type="button"
-                    class="top-basket-button"
-                    onclick="openBasket()"
-                >
-                    &#128722;
-
-                    <span id="topBasketCount">
-                        0
-                    </span>
-                </button>
+    type="button"
+    class="top-basket-button"
+    onclick="openBasket()"
+    aria-label="Open reserved books"
+    title="My Reserved Books"
+>
+    <span class="open-book-icon">📖</span>
+    <span class="basket-badge" id="topBasketCount">0</span>
+</button>
 
             </header>
 
@@ -240,7 +247,7 @@
 
             <div class="modal-header">
 
-                <h2>My Basket</h2>
+                <h2>My Reserved Books</h2>
 
                 <button
                     type="button"
@@ -275,7 +282,7 @@
                     class="reserve-button"
                     onclick="reserveSelected()"
                 >
-                    Reserve
+                    Reserve Selected
                 </button>
 
             </div>
